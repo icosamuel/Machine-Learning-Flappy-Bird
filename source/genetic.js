@@ -32,7 +32,7 @@ GeneticAlgorithm.prototype = {
 		for (var i=0; i<this.max_units; i++){
 			// create a new unit by generating a random Synaptic neural network
 			// with 2 neurons in the input layer, 6 neurons in the hidden layer and 1 neuron in the output layer
-			var newUnit = new synaptic.Architect.Perceptron(2, 6, 1);
+			var newUnit = new synaptic.Architect.Perceptron(3, 8, 1);
 			
 			// set additional parameters for the new unit
 			newUnit.index = i;
@@ -53,9 +53,12 @@ GeneticAlgorithm.prototype = {
 		
 		// input 2: the height difference between the bird and the target
 		var targetDeltaY = this.normalize(bird.y - target.y, 800) * this.SCALE_FACTOR;
-	
+		
+		// Some noise that the neural network has to learn to ignore
+		var noise = this.normalize(bird.endurence(), 1) * this.SCALE_FACTOR;
+
 		// create an array of all inputs
-		var inputs = [targetDeltaX, targetDeltaY];
+		var inputs = [targetDeltaX, targetDeltaY, noise];
 		
 		// calculate outputs by activating synaptic neural network of this bird
 		var outputs = this.Population[bird.index].activate(inputs);
@@ -178,7 +181,7 @@ GeneticAlgorithm.prototype = {
 	// mutates a gene
 	mutate : function (gene){
 		if (Math.random() < this.mutateRate) {
-			var mutateFactor = 1 + ((Math.random() - 0.5) * 3 + (Math.random() - 0.5));
+			var mutateFactor = 1 + ((Math.random() - 0.5) * 2 + (Math.random() - 0.5));
 			gene *= mutateFactor;
 		}
 		

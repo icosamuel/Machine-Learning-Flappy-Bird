@@ -251,6 +251,7 @@ App.Main.prototype = {
 				
 				this.bmdStatus.rect(62, y, 9, -(50 - brain.neurons[0].activation/scale), "#000088"); // input 1
 				this.bmdStatus.rect(90, y, 9, brain.neurons[1].activation/scale, "#000088"); // input 2
+				this.bmdStatus.rect(105, y, 9, brain.neurons[2].activation/scale, "#000088"); // input 3
 				
 				if (brain.neurons[brain.neurons.length-1].activation<0.5) this.bmdStatus.rect(118, y, 9, -20, "#880000"); // output: flap = no
 				else this.bmdStatus.rect(118, y, 9, -40, "#008800"); // output: flap = yes
@@ -362,6 +363,8 @@ var Bird = function(game, x, y, index) {
 	   
 	this.index = index;
 	this.anchor.setTo(0.5);
+	this.birth = Date.now();
+	this.bias = 0;
 	  
 	// add flap animation and start to play it
 	var i=index*2;
@@ -375,7 +378,21 @@ var Bird = function(game, x, y, index) {
 Bird.prototype = Object.create(Phaser.Sprite.prototype);
 Bird.prototype.constructor = Bird;
 
+Bird.prototype.age = function(){
+	return Date.now() - this.birth;
+}
+
+Bird.prototype.endurence = function(){
+	var factor = (Math.random() *2) -1;
+	return factor * (this.age() / 100000);
+	// this.bias += factor * (this.age() / 720000);
+	// return this.bias;
+}
+
 Bird.prototype.restart = function(iteration){
+	this.birth = Date.now();
+	this.bias = 0;
+
 	this.fitness_prev = (iteration == 1) ? 0 : this.fitness_curr;
 	this.fitness_curr = 0;
 	
@@ -387,7 +404,7 @@ Bird.prototype.restart = function(iteration){
 };
 
 Bird.prototype.flap = function(){
-	this.body.velocity.y = -400;
+	this.body.velocity.y = -300;
 };
 
 Bird.prototype.death = function(){
